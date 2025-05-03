@@ -4,10 +4,10 @@
  *	circuit via the 2 relays.
  *	Then add on an external transsitor to help with PWM.
  *
- * Copyright (c) 2012-2013 Gordon Henderson.
+ * Copyright (c) 2012-2013 Gordon Henderson. <projects@drogon.net>
  ***********************************************************************
  * This file is part of wiringPi:
- *      https://github.com/WiringPi/WiringPi
+ *	https://projects.drogon.net/raspberry-pi/wiringpi/
  *
  *    wiringPi is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Lesser General Public License as published by

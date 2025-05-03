@@ -14,7 +14,7 @@
  *	Copyright (c) 2012-2016 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
- *	https://github.com/WiringPi/WiringPi/
+ *	https://projects.drogon.net/raspberry-pi/wiringpi/
  *
  *    wiringPi is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Lesser General Public License as
@@ -35,12 +35,9 @@
 #define	SHARED_NAME	"wiringPiPseudoPins"
 #define	PSEUDO_PINS	64
 
-#include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/mman.h>
-#include <fcntl.h>
-#include <stdint.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
@@ -48,20 +45,21 @@
 
 #include "pseudoPins.h"
 
-static int myAnalogRead(struct wiringPiNodeStruct *node, int pin)
+static int myAnalogRead (struct wiringPiNodeStruct *node, int pin)
 {
-  int *ptr = (int *)(intptr_t)node->data0; // Cast to intptr_t to handle pointer-to-integer conversion
-  int myPin = pin - node->pinBase;
+  int *ptr   = (int *)node->data0 ;
+  int  myPin = pin - node->pinBase ;
 
-  return *(ptr + myPin);
+  return *(ptr + myPin) ;
 }
 
-static void myAnalogWrite(struct wiringPiNodeStruct *node, int pin, int value)
-{
-  int *ptr = (int *)(intptr_t)node->data0;
-  int myPin = pin - node->pinBase;
 
-  *(ptr + myPin) = value;
+static void myAnalogWrite (struct wiringPiNodeStruct *node, int pin, int value)
+{
+  int *ptr   = (int *)node->data0 ;
+  int  myPin = pin - node->pinBase ;
+
+  *(ptr + myPin) = value ;
 }
 
 
@@ -71,39 +69,27 @@ static void myAnalogWrite(struct wiringPiNodeStruct *node, int pin, int value)
  *********************************************************************************
  */
 
-
-int pseudoPinsSetup(const int pinBase)
+int pseudoPinsSetup (const int pinBase)
 {
-    struct wiringPiNodeStruct *node;
-    void *ptr;
+  struct wiringPiNodeStruct *node ;
+  void *ptr ;
 
-    node = wiringPiNewNode(pinBase, PSEUDO_PINS);
-    if (node == NULL) {
-      fprintf(stderr, "Error creating new wiringPi node");
-      return FALSE;
-    }
+  node = wiringPiNewNode (pinBase, PSEUDO_PINS) ;
 
-    node->fd = shm_open(SHARED_NAME, O_CREAT | O_RDWR, 0666);
-    if (node->fd < 0) {
-      perror("Error opening shared memory");
-      return FALSE;
-    }
+  node->fd = shm_open (SHARED_NAME, O_CREAT | O_RDWR, 0666) ;
 
-    if (ftruncate(node->fd, PSEUDO_PINS * sizeof(int)) < 0) {
-      perror("Error resizing shared memory");
-      return FALSE;
-    }
+  if (node->fd < 0)
+    return FALSE ;
 
-    ptr = mmap(NULL, PSEUDO_PINS * sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, node->fd, 0);
-    if (ptr == MAP_FAILED) {
-      perror("Error mapping shared memory");
-      return FALSE;
-    }
+  if (ftruncate (node->fd, PSEUDO_PINS * sizeof (int)) < 0)
+    return FALSE ;
 
-    node->data0 = (unsigned int)(uintptr_t)ptr;
+  ptr = mmap (NULL, PSEUDO_PINS * sizeof (int), PROT_READ | PROT_WRITE, MAP_SHARED, node->fd, 0) ;
 
-    node->analogRead = myAnalogRead;
-    node->analogWrite = myAnalogWrite;
+  node->data0 = (unsigned int)ptr ;
 
-    return TRUE;
+  node->analogRead  = myAnalogRead ;
+  node->analogWrite = myAnalogWrite ;
+
+  return TRUE ;
 }

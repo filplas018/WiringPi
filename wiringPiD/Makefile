@@ -1,9 +1,9 @@
 #
 # Makefile:
 #	The wiringPiD utility:
-#	https://github.com/wiringPi/wiringPi
+#	https://projects.drogon.net/wiring-pi
 #
-#	Copyright (c) 2012-2024 Gordon Henderson and contributors
+#	Copyright (c) 2012-2017 Gordon Henderson
 #################################################################################
 # This file is part of wiringPi:
 #	A "wiring" library for the Raspberry Pi
@@ -70,7 +70,7 @@ install: wiringpid
 	$Q echo "[Install]"
 	$Q mkdir -p		$(DESTDIR)$(PREFIX)/sbin
 	$Q cp wiringpid		$(DESTDIR)$(PREFIX)/sbin
-	$Q chown root:root	$(DESTDIR)$(PREFIX)/sbin/wiringpid
+	$Q chown root.root	$(DESTDIR)$(PREFIX)/sbin/wiringpid
 
 #	$Q mkdir -p		$(DESTDIR)$(PREFIX)/man/man8
 #	$Q cp gpio.1		$(DESTDIR)$(PREFIX)/man/man8

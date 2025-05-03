@@ -5,7 +5,7 @@
 #	Copyright (c) 2012-2015 Gordon Henderson
 #################################################################################
 # This file is part of wiringPi:
-#	https://github.com/wiringPi/wiringPi
+#	https://projects.drogon.net/raspberry-pi/wiringpi/
 #
 #    wiringPi is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Lesser General Public License as published by
@@ -61,8 +61,7 @@ SRC	=	wiringPi.c						\
 		bmp180.c htu21d.c ds18b20.c rht03.c			\
 		drcSerial.c drcNet.c					\
 		pseudoPins.c						\
-		wpiExtensions.c						\
-		wiringPiLegacy.c
+		wpiExtensions.c
 
 HEADERS =	$(shell ls *.h)
 

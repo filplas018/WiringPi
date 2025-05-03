@@ -1,10 +1,10 @@
 /*
  * readall.c:
  *	The readall functions - getting a bit big, so split them out.
- *	Copyright (c) 2012-2024 Gordon Henderson and contributors
+ *	Copyright (c) 2012-2018 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
- *	https://github.com/WiringPi/WiringPi/
+ *	https://projects.drogon.net/raspberry-pi/wiringpi/
  *
  *    wiringPi is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Lesser General Public License as published by
@@ -75,23 +75,10 @@ static void doReadallExternal (void)
  *********************************************************************************
  */
 
-#define MAX_ALTS 11
-static const char unknown_alt[] = " - ";
-static const char *alts [MAX_ALTS+1] =
+static char *alts [] =
 {
-  "IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "ALT3", "ALT6", "ALT7", "ALT8", "ALT9"
+  "IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "ALT3"
 } ;
-
-
-static const char* GetAltString(int alt) {
-
-  if (alt>=0 && alt<=MAX_ALTS) {
-    return alts[alt];
-  }
-
-  return unknown_alt;
-}
-
 
 static int physToWpi [64] =
 {
@@ -190,7 +177,7 @@ static void readallPhys (int physPin)
     else
       pin = physToWpi [physPin] ;
 
-    printf (" | %4s", GetAltString(getAlt (pin))) ;
+    printf (" | %4s", alts [getAlt (pin)]) ;
     printf (" | %d", digitalRead (pin)) ;
   }
 
@@ -214,7 +201,7 @@ static void readallPhys (int physPin)
       pin = physToWpi [physPin] ;
 
     printf (" | %d", digitalRead (pin)) ;
-    printf (" | %-4s", GetAltString(getAlt (pin))) ;
+    printf (" | %-4s", alts [getAlt (pin)]) ;
   }
 
   printf (" | %-5s", physNames [physPin]) ;
@@ -246,11 +233,11 @@ static void allReadall (void)
   for (pin = 0 ; pin < 27 ; ++pin)
   {
     printf ("| %3d ", pin) ;
-    printf ("| %-4s ", GetAltString(getAlt (pin))) ;
+    printf ("| %-4s ", alts [getAlt (pin)]) ;
     printf ("| %s  ", digitalRead (pin) == HIGH ? "High" : "Low ") ;
     printf ("|      ") ;
     printf ("| %3d ", pin + 27) ;
-    printf ("| %-4s ", GetAltString(getAlt (pin + 27))) ;
+    printf ("| %-4s ", alts [getAlt (pin + 27)]) ;
     printf ("| %s  ", digitalRead (pin + 27) == HIGH ? "High" : "Low ") ;
     printf ("|\n") ;
   }
@@ -303,44 +290,33 @@ void abReadall (int model, int rev)
  *	Read all the pins on the model A+ or the B+ or actually, all 40-pin Pi's
  *********************************************************************************
  */
-const char piModelNamesShort[PI_MODELS_MAX][11] =
-{
-  "---Pi A---",	//  0
-  "---Pi B---",	//  1
-  "---Pi A+--",	//  2
-  "---Pi B+--",	//  3
-  "---Pi 2---",	//  4
-  "---Alpha--",	//  5
-  "----CM----",	//  6
-  "",	// 07
-  "---Pi 3B--",	//  8
-  "-Pi Zero--",	//  9
-  "---CM3----",	// 10
-  "",	// 11
-  "-Pi ZeroW-",	// 12
-  "---Pi 3B+-",	// 13
-  "---Pi 3A+-",	// 14
-  "",	// 15
-  "---CM3+---",	// 16
-  "---Pi 4B--",	// 17
-  "Pi Zero 2W",	// 18
-  "--Pi 400--",	// 19
-  "---CM4----",	// 20
-  "---CM4S---",	// 21
-  "",	// 22
-  "---Pi 5---",	// 23
-  "---CM5----",	// 24
-  "--Pi 500--",	// 25
-  "---CM5L---",	// 24
-} ;
 
 static void plus2header (int model)
 {
-  if (model<PI_MODELS_MAX && piModelNamesShort[model][0]!='\0') {
-    printf (" +-----+-----+---------+------+---+%s+---+------+---------+-----+-----+\n", piModelNamesShort[model]);
-  } else {
-    printf (" +-----+-----+---------+------+---+---- ? ---+---+------+---------+-----+-----+\n");
-  }
+  /**/ if (model == PI_MODEL_AP)
+    printf (" +-----+-----+---------+------+---+---Pi A+--+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_BP)
+    printf (" +-----+-----+---------+------+---+---Pi B+--+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_ZERO)
+    printf (" +-----+-----+---------+------+---+-Pi Zero--+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_ZERO_W)
+    printf (" +-----+-----+---------+------+---+-Pi ZeroW-+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_ZERO_2W)
+    printf (" +-----+-----+---------+------+---+Pi Zero 2W+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_2)
+    printf (" +-----+-----+---------+------+---+---Pi 2---+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_3B)
+    printf (" +-----+-----+---------+------+---+---Pi 3B--+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_3BP)
+    printf (" +-----+-----+---------+------+---+---Pi 3B+-+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_3AP)
+    printf (" +-----+-----+---------+------+---+---Pi 3A+-+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_4B)
+    printf (" +-----+-----+---------+------+---+---Pi 4B--+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_400)
+    printf (" +-----+-----+---------+------+---+---Pi 400-+---+------+---------+-----+-----+\n") ;
+  else
+    printf (" +-----+-----+---------+------+---+---Pi ?---+---+------+---------+-----+-----+\n") ;
 }
 
 
@@ -386,11 +362,10 @@ void doReadall (void)
 	(model == PI_MODEL_2)    ||
 	(model == PI_MODEL_3AP)  ||
 	(model == PI_MODEL_3B)   || (model == PI_MODEL_3BP) ||
-	(model == PI_MODEL_4B)   || (model == PI_MODEL_400) || (model == PI_MODEL_CM4) || (model == PI_MODEL_CM4S) ||
-	(model == PI_MODEL_ZERO) || (model == PI_MODEL_ZERO_W) || (model == PI_MODEL_ZERO_2W) ||
-  (model == PI_MODEL_5)    || (model == PI_MODEL_500) || (model == PI_MODEL_CM5) || (model == PI_MODEL_CM5L) )
+	(model == PI_MODEL_4B)   || (model == PI_MODEL_400) || (model == PI_MODEL_CM4) ||
+	(model == PI_MODEL_ZERO) || (model == PI_MODEL_ZERO_W) || (model == PI_MODEL_ZERO_2W))
     piPlusReadall (model) ;
-  else if ((model == PI_MODEL_CM) || (model == PI_MODEL_CM3) || (model == PI_MODEL_CM3P) )  //could be Compute Module 1/3/3+ IO Board 120 GPIO pins, legacy code
+  else if ((model == PI_MODEL_CM) || (model == PI_MODEL_CM3) || (model == PI_MODEL_CM3P) )
     allReadall () ;
   else
     printf ("Oops - unable to determine board type... model: %d\n", model) ;
@@ -426,5 +401,5 @@ void doQmode (int argc, char *argv [])
   }
 
   pin = atoi (argv [2]) ;
-  printf ("%s\n", GetAltString(getAlt (pin))) ;
+  printf ("%s\n", alts [getAlt (pin)]) ;
 }

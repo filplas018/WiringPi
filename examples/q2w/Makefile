@@ -1,7 +1,7 @@
 #
 # Makefile:
 #	wiringPi - A "wiring" library for the Raspberry Pi
-#	https://github.com/wiringPi/wiringPi
+#	https://projects.drogon.net/wiring-pi
 #
 #	Copyright (c) 2012-2013 Gordon Henderson
 #################################################################################

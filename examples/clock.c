@@ -16,7 +16,7 @@
  * Copyright (c) 2012-2013 Gordon Henderson.
  ***********************************************************************
  * This file is part of wiringPi:
- *	https://github.com/WiringPi/WiringPi/
+ *	https://projects.drogon.net/raspberry-pi/wiringpi/
  *
  *    wiringPi is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Lesser General Public License as published by
@@ -65,7 +65,7 @@ void drawClockHands (void)
   struct tm *now ;
   double angle, p, x0, y0, x1, y1 ;
   int h24, h, m, s ;
-  char text [40] ;
+  char text [20] ;
 
   time (&t) ;
   now = localtime (&t) ;
